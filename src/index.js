@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
         if(error){
             return callback(error)
         }
-        socket.join(user.oom)
+        socket.join(user.room)
 
         socket.emit('message', generateMessage('Welcome'))
         socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined`))
@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
 
 
     socket.on('sendMessage', (message, callback) => {
+        const user = getUser(socket.id)
         const filter = new Filter()
 
         if (filter.isProfane(message)) {
@@ -53,6 +54,9 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         const user = removeUser(socket.id)
+        if (user){
+             io.to(user.room).emit('message',generateMessage(`${user.username} has left`))
+        }
     })
 })
 
