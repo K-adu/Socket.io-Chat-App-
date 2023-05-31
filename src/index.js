@@ -1,32 +1,31 @@
-//importing libaries and files
-const express = require('express')
-const path = require('path')
-const http = require('http')
-const socketio = require('socket.io')
+//defininf global variable
+const PORT = process.env.PORT || 3000
 
-//initializing instances
+//loading third parties libraribes and framworks
+const express = require('express')
+const socketio = require('socket.io')
+const http = require('http')
+const path = require('path')
+
+// instantiate express and httpServer
 const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
 
-//defining certain variables
-const PORT = process.env.PORT || 3000
-const publicDirectoryPath = path.join(__dirname, '../public')
-
-
-let count =0
+//defining the public client side path
+const publicBaseDirectory = path.join(__dirname,'../public') 
+app.use(express.static(publicBaseDirectory))
 
 io.on('connection',(socket)=>{
-    console.log('new websocket connection')
-    socket.emit('countUpdated')
+    console.log('connection established client connected')
+    welcomeText = 'welcome user'
+    socket.emit('message',welcomeText)
 })
 
 
-app.use(express.static('public'))
+// server listening to port no 3000
+server.listen(PORT,()=>[
+    console.log(`server running in port number ${PORT}`)
+])
 
 
-
-//server up
-server.listen(PORT,()=>{
-    console.log(`server running on port no ${PORT}`)
- })
