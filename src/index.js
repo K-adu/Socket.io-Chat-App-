@@ -20,6 +20,11 @@ io.on('connection',(socket)=>{
     console.log('connection established client connected')
     welcomeText = 'welcome user'
     socket.emit('message',welcomeText)
+
+    socket.on('sendMessage',(message)=>{
+        io.emit('sendmessageserver',message)
+    })
+
 })
 
 
